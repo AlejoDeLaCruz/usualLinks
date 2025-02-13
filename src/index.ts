@@ -7,4 +7,4 @@ const port = process.env.PORT || 3001; //process.env.PORT es el puerto que nos v
 
 app.listen(port, () => {
     console.log(colors.cyan.italic (`Servidor funcionando en: ${port}`) );
-})          //PUERTO 3001 DEL SERVIDOR      
+})          //PUERTO 3001 DEL SERVIDOR
