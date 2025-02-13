@@ -32,4 +32,8 @@ router.post('/auth/register', (req, res) => {
     console.log(req.body);
 })
 
+router.get('/', (req, res) => {
+    res.send('Hola mundo esta es la pagina principal')
+})
+
 export default router;
