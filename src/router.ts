@@ -1,7 +1,8 @@
 //ESTE ARCHIVO TIENE LAS RUTAS DE URL DE LOS METODOS (OSEA LAS URL QUE TIENEN LOS METODOS GET, POST, PUT, DELETE)
 import { Router } from "express";
 import { body } from "express-validator"; //EXPRESS VALIDATOR SIRVE PARA VALIDAR COSAS CON EXPRESS EN ESTE CASO EL BODY (LO QUE ENVIA EL USUARIO)
-import { createAccount } from "./handlers/index";
+import { createAccount, login } from "./handlers/index";
+import { handleInputErrors } from "./middleware/validation";
 
 const router = Router();
 
@@ -55,19 +56,34 @@ router.post(
   "/auth/register",
   //VALIDACIONES DE EXPRESS VALIDATOR CON BODY()
   //que es la funcion que reconoce el body osea, lo que envia el usuario en wel formulario:
-  body("handle")    
+  body("handle")
     .notEmpty()
     .withMessage("El username no puede ser vacío"),
   body("name")
     .notEmpty()
     .withMessage("El nombre no puede ser vacío"),
   body("email")
+    .notEmpty()
     .isEmail()
     .withMessage("Email no válido"),
   body("password")
+    .notEmpty()
     .isLength({ min: 8 })
     .withMessage("La contraseña debe tener al menos 8 caracteres"),
+  handleInputErrors,
   createAccount
+);
+
+router.post('/auth/login',
+  body("email")
+    .notEmpty()
+    .isEmail()
+    .withMessage("Email no válido"),
+  body("password")
+    .notEmpty()
+    .withMessage("La contraseña es obligatoria"),
+  handleInputErrors,
+  login
 );
 
 export default router;

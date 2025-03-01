@@ -10,7 +10,7 @@ import {connectDb} from './config/db'
 
 const app = express();          //INSTANCIA DEL SERVIDOR DE EXPRESS, CREACION DE APP EN EXPRESS
 
-// HABILITAR LEER DATOS DE FORMULARIOS PARA EXPRESS
+// HABILITAR LEER DATOS DE FORMULARIOS (la funcion es nativa de EXPRESS)
 
 app.use(express.json())    //usamos "use" porque queremos que este en todos los request y le ponemos .json() para que acepte json
 

@@ -2,19 +2,12 @@
 //ES DECIR TIENE LA REALIZACION DE LOS METODOS.
 import type { Request, Response } from "express"; //IMPORTAMOS LOS TIPOS DE REQ Y RES DESDE EXPRESS PARA QUE EL TYPE SEA CORRECTO
 import User from "../models/User";
-import { hashPassword } from "../utils/auth";
+import { checkPassword, hashPassword } from "../utils/auth";
 import slug from "slug";
 import { validationResult } from "express-validator";
 
 export const createAccount = async (req: Request, res: Response) => {
   try {
-    //MANEJAR ERRORES:
-
-    let errors = validationResult(req); //FUNCION PARA VER EL RESULTADO DE LA VALIDACION GRACIAS A EXPRESS VALIDATOR
-    if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() }); //MANDAMOS EL ERROR A LA RESPUESTA DEL
-    }
-
     /* const user = await User.create(req.body); */ // <------- PRIMERA MANERA DE AGREGAR REGISTROS GRACIAS AL ORM PODEMOS USAR ESTA FORMA SIN HACER TODO EL SQL
     const { default: slugify } = await import("slug");
     const { email, password } = req.body;
@@ -41,7 +34,34 @@ export const createAccount = async (req: Request, res: Response) => {
     user.handle = handle; //CREAMOS EL HANDLE CON SU FORMATO AMIGABLE (slugify es la libreria que hace esto)
     await user.save(); // <------- SEGUNDA MANERA DE AGREGAR REGISTROS
     res.status(200).json({ success: true, data: user }); //RETORNAR UN STATUS Y UNA RESPUESTA
-  } catch (error: any) {
-    res.status(404).json({ success: false, data: error.message });
+  } catch (e: any) {
+    res.status(404).json({ success: false, data: e.message });
+  }
+};
+
+export const login = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+
+    const userExists = await User.findOne({ email }); //ESTO TIENE QUE SER ASINCRONO PARA QUE SE EJECUTE CORRECTAMENTE
+    if (!userExists) {
+      const error = new Error("El usuario no existe");
+      res.status(404).json({ error: error.message });
+      return;
+    }
+
+    //Comprobar si la password es correcta
+
+    const isPasswordCorrect = await checkPassword(password, userExists.password); //ESTO TIENE QUE SER ASINCRONO TAMBIEN CON EL AWAIT
+
+    if (!isPasswordCorrect) {
+      const error = new Error("La contraseña no es correcta");
+      res.status(401).json({ error: error.message });
+      return;
+    }
+
+    res.send('Autenticando...')
+  } catch (e: any) {
+    res.status(404).json({ success: false, data: e.message });
   }
 };
