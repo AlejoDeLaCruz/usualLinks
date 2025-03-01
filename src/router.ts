@@ -63,11 +63,9 @@ router.post(
     .withMessage("El nombre no puede ser vacío"),
   body("email")
     .isEmail()
-    .notEmpty()
     .withMessage("Email no válido"),
   body("password")
     .isLength({ min: 8 })
-    .notEmpty()
     .withMessage("La contraseña debe tener al menos 8 caracteres"),
   createAccount
 );

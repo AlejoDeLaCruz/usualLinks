@@ -17,7 +17,7 @@ export const connectDb = async () => {
         console.log(colors.magenta.italic.bold (`mongo conectado en ${url}`));
     }catch (error: any){
         //MANEJO DE ERRORES
-        console.log( colors.bgRed.black.italic.bold (error?.message));
+        console.log( colors.red.italic.bold (error?.message));
         process.exit(1);   //MANERA DE TERMINAR EL PROYECTO (PORQUE HAY UN ERROR EN LA BASE DE DATOS)
     }
 }
